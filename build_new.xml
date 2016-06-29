@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="plugins" basedir="." default="plugin_default">
+  <!-- Arguments to gwtc and devmode targets -->
+
+  <!-- Configure path to GWT SDK -->
+  <!--需要将location属性改为自己插件项目所在文件目录-->	
+  <property name="openfire.sdk" location="D:/java/openfire_plugin_wechat" />
+
+  <!--如果插件项目所依赖第三方jar包不是放在lib目录下，请更改dir属性 -->
+  <path id="project.class.path">
+    <pathelement location="buildplugin/classes"/>
+	<fileset dir="${openfire.sdk}/lib" includes="*.jar"/>
+  </path>
+
+<target name="javac-userinfo" description="Compile java source">
+    <mkdir dir="buildplugin/classes/userinfo"/>
+    <javac srcdir="src/java" encoding="utf-8" destdir="buildplugin/classes/userinfo"
+        includes="com/wangzhe/plugin/user/*.java"
+        source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
+      <classpath refid="project.class.path"/>
+    </javac>
+  </target>
+  
+  <target name="jar-userinfo" description="" depends="javac-userinfo">
+      <mkdir dir="buildplugin/userinfo/lib" />
+      <jar jarfile="buildplugin/userinfo/lib/userinfo_dist.jar" >
+          <fileset dir="buildplugin/classes/userinfo" includes="**/*.class"></fileset>
+      </jar>
+  </target>
+  
+  <target name="war-userinfo" description="" depends="jar-userinfo">
+      <copy file="src/java/com/wangzhe/plugin/user/plugin.xml"
+          todir="buildplugin/userinfo"/>
+      <jar jarfile="buildplugin/userinfo.jar">
+          <fileset dir="buildplugin/userinfo" includes="**"></fileset>
+      </jar>
+  </target>	
+  
+  <target name="clean" description="Cleans this project">
+    <delete dir="buildplugin" failonerror="false" />
+  </target>
+
+  <target name="plugin_default" depends="clean, war-userinfo"></target>
+
+</project>
