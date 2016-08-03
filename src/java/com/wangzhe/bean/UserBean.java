@@ -1,5 +1,6 @@
 package com.wangzhe.bean;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.dom4j.Document;
@@ -23,6 +24,7 @@ public class UserBean {
 	public static final String BIRTHDAY = "birthday";
 	public static final String TYPE ="type";
 	public static final String TELEPHONE = "telephone";
+	public static final String MODIFICATIONDATE = "modificationDate";
 
 	private String uid;//
 	private String userName;// 
@@ -35,17 +37,19 @@ public class UserBean {
     private String location;// 
     private String birthday;// 
     private String type;// 
+    private Date modificationDate;
 
     public UserBean(){
 
     }
 
     public UserBean(User user){
+    	Map<String, String> properties = user.getProperties();
     	uid = user.getUID();
     	userName = user.getUsername();
-    	nickName = user.getName();
-    	email = user.getEmail();
-    	Map<String, String> properties = user.getProperties();
+    	modificationDate = user.getModificationDate();
+    	nickName = properties.get(NICKNAME);
+    	email = properties.get(EMAIL);
     	telephone = properties.get(TELEPHONE);
     	headUrl = properties.get(HEADURL);
     	signature = properties.get(SIGNATURE);
@@ -156,6 +160,14 @@ public class UserBean {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public Date getModificationDate() {
+		return modificationDate;
+	}
+
+	public void setModificationDate(Date modificationDate) {
+		this.modificationDate = modificationDate;
 	}
 	
 	

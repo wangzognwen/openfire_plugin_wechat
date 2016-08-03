@@ -15,7 +15,7 @@
 <target name="javac-userinfo" description="Compile java source">
     <mkdir dir="buildplugin/classes/userinfo"/>
     <javac srcdir="src/java" encoding="utf-8" destdir="buildplugin/classes/userinfo"
-        includes="com/wangzhe/plugin/user/*.java"
+        includes="com/wangzhe/plugins/user/*.java"
         source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
       <classpath refid="project.class.path"/>
     </javac>
@@ -29,17 +29,43 @@
   </target>
   
   <target name="war-userinfo" description="" depends="jar-userinfo">
-      <copy file="src/java/com/wangzhe/plugin/user/plugin.xml"
+      <copy file="src/java/com/wangzhe/plugins/user/plugin.xml"
           todir="buildplugin/userinfo"/>
       <jar jarfile="buildplugin/userinfo.jar">
           <fileset dir="buildplugin/userinfo" includes="**"></fileset>
       </jar>
   </target>	
+	
+	<target name="javac-message" description="Compile java source">
+	    <mkdir dir="buildplugin/classes/message"/>
+	    <javac srcdir="src/java" encoding="utf-8" destdir="buildplugin/classes/message"
+	        includes="com/wangzhe/plugins/message/*.java"
+	        source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
+	      <classpath refid="project.class.path"/>
+	    </javac>
+	  </target>
+	  
+	  <target name="jar-message" description="" depends="javac-message">
+	      <mkdir dir="buildplugin/message/lib" />
+	      <jar jarfile="buildplugin/message/lib/message_dist.jar" >
+	          <fileset dir="buildplugin/classes/message" includes="**/*.class"></fileset>
+	      </jar>
+	  </target>
+	  
+	  <target name="war-message" description="" depends="jar-message">
+	      <copy file="src/java/com/wangzhe/plugins/message/plugin.xml"
+	          todir="buildplugin/message"/>
+	  	  <copy file="src/java/com/wangzhe/plugins/message/changelog.html"
+	  		          todir="buildplugin/message"/>
+	      <jar jarfile="buildplugin/message.jar">
+	          <fileset dir="buildplugin/message" includes="**"></fileset>
+	      </jar>
+	  </target>			
   
   <target name="clean" description="Cleans this project">
     <delete dir="buildplugin" failonerror="false" />
   </target>
 
-  <target name="plugin_default" depends="clean, war-userinfo"></target>
+  <target name="plugin_default" depends="clean, war-userinfo, war-message"></target>
 
 </project>

@@ -1,4 +1,4 @@
-package com.wangzhe.plugin.user;
+package com.wangzhe.plugins.user;
 
 import java.io.File;
 

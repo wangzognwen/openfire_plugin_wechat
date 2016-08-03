@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+	<class>com.wangzhe.plugins.message.MessagePlugin</class>
+	<name>MessageInterceptor Plugin</name>
+	<description>custom processing messages</description>
+    <author>王宗文</author>
+	<version>1.0.0</version>
+	<date>8/2/2016</date>
+	<minServerVersion>3.9.0</minServerVersion>
+</plugin>
