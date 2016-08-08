@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.apache.jasper.tagplugins.jstl.core.If;
 import org.dom4j.Element;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.interceptor.PacketInterceptor;
@@ -54,6 +53,7 @@ public class MessageInterceptor implements PacketInterceptor{
 		Message replyMessage = message.createCopy();
 		replyMessage.setFrom(MessageComponent.NODE);
 		replyMessage.setTo(message.getFrom());
+		replyMessage.setType(Message.Type.normal);
 		session.process(replyMessage);
 	}
 	

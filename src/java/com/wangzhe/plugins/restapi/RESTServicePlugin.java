@@ -40,7 +40,6 @@ import com.wangzhe.bean.SystemProperties;
 import com.wangzhe.bean.SystemProperty;
 import com.wangzhe.exceptions.ExceptionType;
 import com.wangzhe.exceptions.ServiceException;
-import com.wangzhe.service.JerseyWrapper;
 
 
 

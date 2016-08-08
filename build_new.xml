@@ -4,7 +4,7 @@
 
   <!-- Configure path to GWT SDK -->
   <!--需要将location属性改为自己插件项目所在文件目录-->	
-  <property name="openfire.sdk" location="D:/java/openfire_plugin_wechat" />
+  <property name="openfire.sdk" location="E:/java/openfire_plugin_wechat" />
 
   <!--如果插件项目所依赖第三方jar包不是放在lib目录下，请更改dir属性 -->
   <path id="project.class.path">
@@ -35,8 +35,8 @@
           <fileset dir="buildplugin/userinfo" includes="**"></fileset>
       </jar>
   </target>	
-	
-	<target name="javac-message" description="Compile java source">
+  
+  <target name="javac-message" description="Compile java source">
 	    <mkdir dir="buildplugin/classes/message"/>
 	    <javac srcdir="src/java" encoding="utf-8" destdir="buildplugin/classes/message"
 	        includes="com/wangzhe/plugins/message/*.java"
@@ -60,12 +60,50 @@
 	      <jar jarfile="buildplugin/message.jar">
 	          <fileset dir="buildplugin/message" includes="**"></fileset>
 	      </jar>
-	  </target>			
+	  </target>				
+	
+	<target name="javac-restapi" description="Compile java source">
+	    <mkdir dir="buildplugin/classes/restapi"/>
+	    <javac srcdir="src/java" encoding="utf-8" destdir="buildplugin/classes/restapi"
+	        includes="com/wangzhe/plugins/restapi/*.java"
+	        source="1.7" target="1.7" nowarn="true" debug="true" debuglevel="lines,vars,source">
+	      <classpath refid="project.class.path"/>
+	    </javac>
+	  </target>
+	  
+	  <target name="jar-restapi" description="" depends="javac-restapi">
+	      <mkdir dir="buildplugin/restapi/lib" />
+	      <jar jarfile="buildplugin/restapi/lib/restapi_dist.jar" >
+	          <fileset dir="buildplugin/classes/restapi" includes="**/*.class"></fileset>
+	      </jar>
+	  </target>
+	  
+	  <target name="war-restapi" description="" depends="jar-restapi">
+	      <mkdir dir="buildplugin/restapi/web" />
+	  	  <copy todir="buildplugin/restapi/web">
+            <fileset dir="src/web/restapi" includes="**"></fileset>
+     	  </copy>
+     	  <copy todir="buildplugin/restapi/lib">
+     	      <fileset dir="lib" includes="j*.jar"></fileset>
+     	      <fileset dir="lib" includes="asm-3.1.jar"></fileset>
+     	  </copy>    
+     	  
+	      <copy file="src/java/com/wangzhe/plugins/restapi/plugin.xml"
+	          todir="buildplugin/restapi"/>
+	  	  <copy file="src/java/com/wangzhe/plugins/restapi/changelog.html"
+	  		          todir="buildplugin/restapi"/>
+	  	  
+	      <jar jarfile="buildplugin/restapi.jar">
+	          <fileset dir="buildplugin/restapi" includes="**"></fileset>
+	      </jar>
+	  </target>
+	  
+	  	
   
   <target name="clean" description="Cleans this project">
     <delete dir="buildplugin" failonerror="false" />
   </target>
 
-  <target name="plugin_default" depends="clean, war-userinfo, war-message"></target>
+  <target name="plugin_default" depends="clean, war-userinfo, war-message, war-restapi"></target>
 
 </project>

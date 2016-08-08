@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.wangzhe.bean.MessageEntity;
+import com.wangzhe.util.TimeUtil;
 
 public class MessageDao {
 	private static final MessageDao mInstance =
@@ -44,7 +45,7 @@ public class MessageDao {
             pstmt.setString(3, messageEntity.getType());
             pstmt.setString(5, messageEntity.getBody());
             pstmt.setString(4, messageEntity.getPacketId());
-            pstmt.setTime(6, new Time(messageEntity.getTime().getTime()));
+            pstmt.setString(6, TimeUtil.format(messageEntity.getTime(), true));
             pstmt.setString(7, messageEntity.getExtra());
             pstmt.executeUpdate();
             added = true;
