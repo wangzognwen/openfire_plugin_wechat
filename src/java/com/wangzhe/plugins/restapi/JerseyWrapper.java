@@ -1,12 +1,11 @@
 package com.wangzhe.plugins.restapi;
 
+import com.wangzhe.exceptions.RESTExceptionMapper;
+import com.wangzhe.plugins.restapi.service.UserService;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import java.lang.ClassNotFoundException;
-import java.lang.Class;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,8 +15,6 @@ import org.jivesoftware.util.JiveGlobals;
 
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.wangzhe.exceptions.RESTExceptionMapper;
-import com.wangzhe.plugins.restapi.service.UserService;
 
 /**
  * The Class JerseyWrapper.

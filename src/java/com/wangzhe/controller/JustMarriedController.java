@@ -1,5 +1,7 @@
 package com.wangzhe.controller;
 
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -21,9 +23,6 @@ import org.jivesoftware.openfire.user.UserManager;
 import org.jivesoftware.openfire.user.UserNotFoundException;
 import org.jivesoftware.openfire.vcard.VCardManager;
 import org.xmpp.packet.StreamError;
-
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 /**
  * The Class JustMarriedController.

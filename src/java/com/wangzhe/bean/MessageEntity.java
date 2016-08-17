@@ -1,15 +1,13 @@
 package com.wangzhe.bean;
 
+import com.wangzhe.util.TimeUtil;
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.dom4j.Element;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Message.Type;
-
-import com.wangzhe.util.TimeUtil;
 
 /**
  * The Class MessageEntity.

@@ -1,16 +1,14 @@
 package com.wangzhe.plugins.message;
 
+import com.wangzhe.service.MessageService;
+
 import org.jivesoftware.openfire.XMPPServer;
-import org.jivesoftware.openfire.session.Session;
 import org.xmpp.component.Component;
 import org.xmpp.component.ComponentException;
 import org.xmpp.component.ComponentManager;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
-
-import com.wangzhe.dao.MessageDao;
-import com.wangzhe.service.MessageService;
 
 
 public class MessageComponent implements Component{

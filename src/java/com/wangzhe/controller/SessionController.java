@@ -1,5 +1,9 @@
 package com.wangzhe.controller;
 
+import com.wangzhe.bean.SessionEntities;
+import com.wangzhe.bean.SessionEntity;
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,11 +18,6 @@ import org.jivesoftware.openfire.user.UserNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmpp.packet.StreamError;
-
-import com.wangzhe.bean.SessionEntities;
-import com.wangzhe.bean.SessionEntity;
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 /**
  * The Class SessionController.

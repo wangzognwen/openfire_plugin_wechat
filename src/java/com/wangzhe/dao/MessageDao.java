@@ -1,17 +1,14 @@
 package com.wangzhe.dao;
 
+import com.wangzhe.bean.MessageEntity;
+import com.wangzhe.util.TimeUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Time;
 
 import org.jivesoftware.database.DbConnectionManager;
 import org.jivesoftware.util.LocaleUtils;
-import org.jivesoftware.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.wangzhe.bean.MessageEntity;
-import com.wangzhe.util.TimeUtil;
 
 public class MessageDao {
 	private static final MessageDao mInstance =

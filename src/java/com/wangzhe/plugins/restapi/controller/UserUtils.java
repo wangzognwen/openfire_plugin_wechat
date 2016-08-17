@@ -1,21 +1,20 @@
 package com.wangzhe.plugins.restapi.controller;
 
+import com.wangzhe.bean.UserEntity;
+import com.wangzhe.bean.UserProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.jivesoftware.openfire.XMPPServer;
+import org.jivesoftware.openfire.group.Group;
+import org.jivesoftware.openfire.group.GroupJID;
+import org.jivesoftware.openfire.group.GroupManager;
+import org.jivesoftware.openfire.group.GroupNotFoundException;
 import org.jivesoftware.openfire.user.User;
 import org.jivesoftware.openfire.user.UserAlreadyExistsException;
-import org.jivesoftware.openfire.group.Group;
-import org.jivesoftware.openfire.group.GroupManager;
-import org.jivesoftware.openfire.group.GroupJID;
-import org.jivesoftware.openfire.group.GroupNotFoundException;
 import org.xmpp.packet.JID;
-
-import com.wangzhe.bean.UserEntity;
-import com.wangzhe.bean.UserProperty;
 
 // TODO: Auto-generated Javadoc
 /**

@@ -1,5 +1,17 @@
 package com.wangzhe.plugins.restapi.controller;
 
+import com.wangzhe.bean.GroupEntity;
+import com.wangzhe.bean.RosterEntities;
+import com.wangzhe.bean.RosterItemEntity;
+import com.wangzhe.bean.UserEntities;
+import com.wangzhe.bean.UserEntity;
+import com.wangzhe.bean.UserGroupsEntity;
+import com.wangzhe.bean.UserProperty;
+import com.wangzhe.controller.GroupController;
+import com.wangzhe.controller.JustMarriedController;
+import com.wangzhe.dao.PropertyDAO;
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -23,19 +35,6 @@ import org.jivesoftware.openfire.user.UserManager;
 import org.jivesoftware.openfire.user.UserNotFoundException;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.StreamError;
-
-import com.wangzhe.bean.GroupEntity;
-import com.wangzhe.bean.RosterEntities;
-import com.wangzhe.bean.RosterItemEntity;
-import com.wangzhe.bean.UserEntities;
-import com.wangzhe.bean.UserEntity;
-import com.wangzhe.bean.UserGroupsEntity;
-import com.wangzhe.bean.UserProperty;
-import com.wangzhe.controller.GroupController;
-import com.wangzhe.controller.JustMarriedController;
-import com.wangzhe.dao.PropertyDAO;
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 /**
  * The Class UserServiceController.

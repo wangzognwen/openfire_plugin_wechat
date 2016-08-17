@@ -1,5 +1,7 @@
 package com.wangzhe.dao;
 
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +12,6 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.jivesoftware.database.DbConnectionManager;
-
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 /**
  * The Class PropertyDAO.

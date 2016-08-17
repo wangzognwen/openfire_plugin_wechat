@@ -19,6 +19,10 @@
 
 package com.wangzhe.plugins.restapi;
 
+import com.wangzhe.bean.SystemProperties;
+import com.wangzhe.bean.SystemProperty;
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,16 +34,10 @@ import javax.ws.rs.core.Response;
 
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
-
 import org.jivesoftware.util.JiveGlobals;
 import org.jivesoftware.util.PropertyEventDispatcher;
 import org.jivesoftware.util.PropertyEventListener;
 import org.jivesoftware.util.StringUtils;
-
-import com.wangzhe.bean.SystemProperties;
-import com.wangzhe.bean.SystemProperty;
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 
 

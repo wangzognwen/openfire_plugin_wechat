@@ -1,20 +1,18 @@
 package com.wangzhe.plugins.message;
 
+import com.wangzhe.service.MessageService;
+import com.wangzhe.util.TimeUtil;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.dom4j.Element;
-import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.interceptor.PacketInterceptor;
 import org.jivesoftware.openfire.interceptor.PacketRejectedException;
 import org.jivesoftware.openfire.session.Session;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
-
-import com.wangzhe.service.MessageService;
-import com.wangzhe.util.TimeUtil;
 
 public class MessageInterceptor implements PacketInterceptor{
 	private String utc = TimeZone.getDefault().

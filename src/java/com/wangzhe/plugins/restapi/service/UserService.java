@@ -1,5 +1,10 @@
 package com.wangzhe.plugins.restapi.service;
 
+import com.wangzhe.bean.UserEntities;
+import com.wangzhe.bean.UserEntity;
+import com.wangzhe.exceptions.ServiceException;
+import com.wangzhe.plugins.restapi.controller.UserServiceController;
+
 import javax.annotation.PostConstruct;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -11,11 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.wangzhe.bean.UserEntities;
-import com.wangzhe.bean.UserEntity;
-import com.wangzhe.exceptions.ServiceException;
-import com.wangzhe.plugins.restapi.controller.UserServiceController;
 
 
 @Path("restapi/v1/users")

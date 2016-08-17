@@ -1,16 +1,12 @@
 package com.wangzhe.service;
 
-import java.util.Iterator;
+import com.wangzhe.bean.MessageEntity;
+import com.wangzhe.dao.MessageDao;
 
-import org.dom4j.Element;
-import org.dom4j.QName;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.user.UserManager;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
-
-import com.wangzhe.bean.MessageEntity;
-import com.wangzhe.dao.MessageDao;
 
 public class MessageService {
 	private static final MessageService mInstance =

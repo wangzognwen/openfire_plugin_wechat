@@ -1,5 +1,9 @@
 package com.wangzhe.handler;
 
+import com.wangzhe.bean.UserBean;
+import com.wangzhe.constant.ResultCode;
+import com.wangzhe.util.StringUtil;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -23,10 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.xmpp.packet.IQ;
 import org.xmpp.packet.IQ.Type;
 import org.xmpp.packet.JID;
-
-import com.wangzhe.bean.UserBean;
-import com.wangzhe.constant.ResultCode;
-import com.wangzhe.util.StringUtil;
 
 public class IQUserInfoHandler extends IQHandler{
 	private static final Logger Log = LoggerFactory.getLogger(IQAuthHandler.class);

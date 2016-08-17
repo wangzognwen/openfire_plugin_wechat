@@ -1,5 +1,8 @@
 package com.wangzhe.controller;
 
+import com.wangzhe.bean.GroupEntity;
+import com.wangzhe.exceptions.ExceptionType;
+import com.wangzhe.exceptions.ServiceException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,10 +13,6 @@ import org.jivesoftware.openfire.group.Group;
 import org.jivesoftware.openfire.group.GroupAlreadyExistsException;
 import org.jivesoftware.openfire.group.GroupManager;
 import org.jivesoftware.openfire.group.GroupNotFoundException;
-
-import com.wangzhe.bean.GroupEntity;
-import com.wangzhe.exceptions.ExceptionType;
-import com.wangzhe.exceptions.ServiceException;
 
 /**
  * The Class GroupController.

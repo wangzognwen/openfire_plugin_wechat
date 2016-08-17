@@ -1,16 +1,10 @@
 package com.wangzhe.bean;
 
+import com.wangzhe.util.StringAppend;
 import java.util.Date;
 import java.util.Map;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
 import org.jivesoftware.openfire.user.User;
-
-import com.wangzhe.util.StringAppend;
-
-import sun.nio.cs.ext.ISCII91;
 
 public class UserBean {
 	public static final String UID = "id";

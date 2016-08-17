@@ -1,12 +1,11 @@
 package com.wangzhe.plugins.user;
 
+import com.wangzhe.handler.IQUserInfoHandler;
 import java.io.File;
 
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.container.Plugin;
 import org.jivesoftware.openfire.container.PluginManager;
-
-import com.wangzhe.handler.IQUserInfoHandler;
 
 public class UserInfoPlugin implements Plugin{ 
 	private XMPPServer xmppServer = XMPPServer.getInstance();
