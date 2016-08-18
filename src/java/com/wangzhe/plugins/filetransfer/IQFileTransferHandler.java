@@ -5,16 +5,25 @@ import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.SessionManager;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.auth.UnauthorizedException;
+import org.jivesoftware.openfire.filetransfer.proxy.ProxyTransfer;
 import org.jivesoftware.openfire.handler.IQHandler;
 import org.jivesoftware.openfire.session.LocalClientSession;
+import org.jivesoftware.util.StringUtils;
+import org.jivesoftware.util.cache.Cache;
+import org.jivesoftware.util.cache.CacheFactory;
 import org.xmpp.packet.IQ;
+
 
 public class IQFileTransferHandler extends IQHandler{
 	private IQHandlerInfo info;
+	private String domain;
+	private Cache<String, FileTransfer> connectionMap;
 
 	public IQFileTransferHandler() {
 		super("xmpp file transfer handler");
 		info = new IQHandlerInfo("transfer", "xmpp:custom:transfer");
+		domain = XMPPServer.getInstance().getServerInfo().getXMPPDomain();
+		connectionMap = CacheFactory.createCache("custom file transfer");
 	}
 
 	@Override
@@ -43,12 +52,18 @@ public class IQFileTransferHandler extends IQHandler{
 			FileTransfer fileTransfer = 
 					new FileTransfer(initiator, target, sid, fileName, fileSize, mimeType);
 			
-			LocalClientSession session = 
-					(LocalClientSession) SessionManager.getInstance().getSession(packet.getFrom());
+			String digest = StringUtils.hash(initiator + target, "SHA-1");
+			connectionMap.put(digest, fileTransfer);
+			Element digestElement = transferElement.addElement("digest");
+			digestElement.addText(digest);
 			
+			IQ replyPacket = IQ.createResultIQ(packet);
+			replyPacket.setFrom(domain);
+			replyPacket.setChildElement(packet.getChildElement());
+			return replyPacket;
 		}
 		
-		return null;
+		return packet;
 	}
 
 }
