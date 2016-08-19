@@ -1,5 +1,8 @@
 package com.wangzhe.plugins.filetransfer;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.dom4j.Element;
 import org.jivesoftware.openfire.IQHandlerInfo;
 import org.jivesoftware.openfire.SessionManager;
@@ -17,13 +20,15 @@ import org.xmpp.packet.IQ;
 public class IQFileTransferHandler extends IQHandler{
 	private IQHandlerInfo info;
 	private String domain;
-	private Cache<String, FileTransfer> connectionMap;
+	private Map<String, FileTransfer> connectionMap;
+	private static IQFileTransferHandler mInstance;
 
 	public IQFileTransferHandler() {
 		super("xmpp file transfer handler");
 		info = new IQHandlerInfo("transfer", "xmpp:custom:transfer");
 		domain = XMPPServer.getInstance().getServerInfo().getXMPPDomain();
-		connectionMap = CacheFactory.createCache("custom file transfer");
+		connectionMap = new ConcurrentHashMap<>();
+		mInstance = this;
 	}
 
 	@Override
@@ -54,16 +59,25 @@ public class IQFileTransferHandler extends IQHandler{
 			
 			String digest = StringUtils.hash(initiator + target, "SHA-1");
 			connectionMap.put(digest, fileTransfer);
-			Element digestElement = transferElement.addElement("digest");
-			digestElement.addText(digest);
+			transferElement.addAttribute("digest", digest);
 			
 			IQ replyPacket = IQ.createResultIQ(packet);
 			replyPacket.setFrom(domain);
-			replyPacket.setChildElement(packet.getChildElement());
+			replyPacket.setChildElement(packet.getChildElement().createCopy());
 			return replyPacket;
 		}
 		
 		return packet;
 	}
+	
+	public static IQFileTransferHandler getInstance(){
+		return mInstance;
+	}
+
+	public Map<String, FileTransfer> getConnectionMap() {
+		return connectionMap;
+	}
+	
+	
 
 }
