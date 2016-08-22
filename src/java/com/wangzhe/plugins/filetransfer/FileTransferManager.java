@@ -10,16 +10,24 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.jivesoftware.openfire.SessionManager;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.container.BasicModule;
+import org.jivesoftware.openfire.session.ClientSession;
+import org.jivesoftware.openfire.session.Session;
+import org.jivesoftware.openfire.user.User;
+import org.jivesoftware.openfire.user.UserManager;
+import org.jivesoftware.openfire.user.UserNotFoundException;
 import org.jivesoftware.util.JiveGlobals;
 import org.jivesoftware.util.PropertyEventListener;
 import org.jivesoftware.util.cache.Cache;
 import org.jivesoftware.util.cache.CacheFactory;
+import org.xmpp.packet.JID;
 
 import com.wangzhe.util.FileUtil;
 
@@ -32,7 +40,7 @@ public class FileTransferManager{
 	public FileTransferManager() {
 		connectionMap = IQFileTransferHandler.getInstance().getConnectionMap();
 		port = JiveGlobals.getIntProperty("xmpp.custom.filetransfer.port", 7700);
-		
+
 	}
 	
 
@@ -75,33 +83,53 @@ public class FileTransferManager{
 		 // first byte is version should be 5
         int b = in.read();
         if (b != 5) {
-            throw new IOException("Only SOCKS5 supported");
+            throw new IOException("Only version 5 supported");
         }
-        int digestlength = in.read();
-        byte[] addr = new byte[digestlength];
-        int read = in.read(addr, 0, addr.length);
-        if (read != addr.length) {
-            throw new IOException("Error reading provided address");
+        
+        byte[] fromData = new byte[32];
+        in.read(fromData);
+       
+        JID fromJid = new JID(new String(fromData), true);
+       
+        Collection<ClientSession> sessions = SessionManager.getInstance().getSessions(fromJid.getNode());
+        if(sessions == null || sessions.isEmpty()){
+        	throw new IOException("from is not invalid");
         }
-        String digest = new String(addr);
-        FileTransfer fileTransfer = connectionMap.get(digest);
-        if(fileTransfer == null){
-        	throw new IOException("forbidden transfer");
-        }
+
+        byte[] toData = new byte[32];
+        in.read(toData);
+        JID toJid = new JID(new String(toData), true);
    
-        saveFile(in, fileTransfer);
+        try {
+			User toUser = UserManager.getInstance().getUser(toJid.getNode());
+		} catch (UserNotFoundException e) {
+			throw new IOException("to is invalid");
+		}
+        
+        byte[] mimeTypeData = new byte[16];
+        in.read(mimeTypeData);
+        String mimeType = new String(mimeTypeData);
+        int fileNamelength = in.read();
+        byte[] fileNameData = new byte[fileNamelength];
+        in.read(fileNameData);
+        String fileName = new String(fileNameData);
+        byte[] fileSizeData = new byte[4];
+        in.read(fileSizeData);
+        int fileSize = Integer.parseInt(new String(fileSizeData));
+   
+        saveFile(in, fileName);
         connection.shutdownInput();
-        connectionMap.remove(digest);
+    
         byte[] resonse = "success".getBytes();
         out.write(resonse);
         out.flush();
         out.close();
 	}
 	
-	private void saveFile(InputStream in, FileTransfer fileTransfer){
+	private void saveFile(InputStream in, String fileName){
 		String filePath = JiveGlobals.getProperty("file.transfer.path", 
 				"D:\\img");
-		File file = new File(filePath, fileTransfer.getFileName());
+		File file = new File(filePath, fileName);
 		OutputStream out;
 		try {
 			out = new FileOutputStream(file);
