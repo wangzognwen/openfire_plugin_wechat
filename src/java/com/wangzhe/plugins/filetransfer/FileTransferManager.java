@@ -10,23 +10,17 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.jivesoftware.openfire.SessionManager;
-import org.jivesoftware.openfire.XMPPServer;
-import org.jivesoftware.openfire.container.BasicModule;
 import org.jivesoftware.openfire.session.ClientSession;
-import org.jivesoftware.openfire.session.Session;
-import org.jivesoftware.openfire.user.User;
-import org.jivesoftware.openfire.user.UserManager;
-import org.jivesoftware.openfire.user.UserNotFoundException;
 import org.jivesoftware.util.JiveGlobals;
-import org.jivesoftware.util.PropertyEventListener;
-import org.jivesoftware.util.cache.Cache;
-import org.jivesoftware.util.cache.CacheFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmpp.packet.JID;
 
 import com.wangzhe.util.FileUtil;
@@ -36,6 +30,10 @@ public class FileTransferManager{
 	private int port;
 	private Map<String, FileTransfer> connectionMap;
 	private ExecutorService executor = Executors.newCachedThreadPool();
+	private static final Logger LOGGER = LoggerFactory.getLogger(FileTransferManager.class);
+	
+	private static final int ACTION_READ = 1;
+	private static final int ACTION_WRITE = 2;
 
 	public FileTransferManager() {
 		connectionMap = IQFileTransferHandler.getInstance().getConnectionMap();
@@ -58,7 +56,12 @@ public class FileTransferManager{
 								try {
 									processIncomingSocket(socket);
 								} catch (IOException e) {
+									LOGGER.error("Checked IOException: " + e.getMessage());
 									try {
+										if(!socket.isClosed()){
+											byte[] response = "fail".getBytes();
+											socket.getOutputStream().write(response);
+										}
 										socket.close();
 									} catch (IOException e1) {
 										e1.printStackTrace();
@@ -69,7 +72,7 @@ public class FileTransferManager{
 						
 					}
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOGGER.error("Checked servercocket IOException: " + e.getMessage());
 				}
 			}
 		});
@@ -86,10 +89,55 @@ public class FileTransferManager{
             throw new IOException("Only version 5 supported");
         }
         
+        int action = in.read();
+        if(action == ACTION_READ){
+        	outputFileToClient(connection, in, out);
+        }else if(action == ACTION_WRITE){
+			saveFile(connection, in, out);
+		}else {
+			throw new IOException("not supported action: " + action);
+		}
+	}
+	
+	private void outputFileToClient(Socket connection, InputStream in, OutputStream out) throws IOException{
+		int fileNameLength = in.read();
+		byte[] fileNameData = new byte[fileNameLength];
+		in.read(fileNameData);
+		String fileName = new String(fileNameData);
+		String filePath = JiveGlobals.getProperty("file.transfer.path", 
+				"D:\\img");
+		connection.shutdownInput();
+		
+		LOGGER.info("fileName: " + fileName);
+		
+		InputStream fileIn = FileUtil.getFileInputStream(filePath + "/" + fileName);
+		if(fileIn == null){
+			throw new IOException("can not find file: " + fileName);
+		}
+		byte[] resonse = "success".getBytes();
+        out.write(resonse);
+        out.write(0);
+        
+        int fileSize = fileIn.available();
+        LOGGER.info("fileSize: " + fileSize);
+        byte[] fileSizeData = Arrays.copyOf(String.valueOf(fileSize).getBytes("utf-8"), 4);
+        LOGGER.info("fileSizeData: " + fileSizeData);
+        out.write(fileSizeData);
+        
+		boolean copy = FileUtil.copy(fileIn, out);
+		LOGGER.info("file copy finished, copy: " + copy);
+		fileIn.close();
+		out.flush();
+        connection.shutdownOutput();
+	}
+	
+	
+	private void saveFile(Socket connection, InputStream in, OutputStream out) throws IOException{
+		 
         byte[] fromData = new byte[32];
         in.read(fromData);
        
-        JID fromJid = new JID(new String(fromData), true);
+        JID fromJid = new JID(new String(fromData).trim(), true);
        
         Collection<ClientSession> sessions = SessionManager.getInstance().getSessions(fromJid.getNode());
         if(sessions == null || sessions.isEmpty()){
@@ -98,13 +146,13 @@ public class FileTransferManager{
 
         byte[] toData = new byte[32];
         in.read(toData);
-        JID toJid = new JID(new String(toData), true);
+        JID toJid = new JID(new String(toData).trim(), true);
    
-        try {
+       /* try {
 			User toUser = UserManager.getInstance().getUser(toJid.getNode());
 		} catch (UserNotFoundException e) {
 			throw new IOException("to is invalid");
-		}
+		}*/
         
         byte[] mimeTypeData = new byte[16];
         in.read(mimeTypeData);
@@ -117,29 +165,20 @@ public class FileTransferManager{
         in.read(fileSizeData);
         int fileSize = Integer.parseInt(new String(fileSizeData));
    
-        saveFile(in, fileName);
+        String filePath = JiveGlobals.getProperty("file.transfer.path", 
+				"D:\\img");
+
+		boolean save = FileUtil.saveFile(in, filePath + "/" + fileName);
         connection.shutdownInput();
+        if(!save){
+        	throw new IOException("save file " + fileName + " failed!");
+        }
     
         byte[] resonse = "success".getBytes();
         out.write(resonse);
+        out.write(0);
         out.flush();
         out.close();
-	}
-	
-	private void saveFile(InputStream in, String fileName){
-		String filePath = JiveGlobals.getProperty("file.transfer.path", 
-				"D:\\img");
-		File file = new File(filePath, fileName);
-		OutputStream out;
-		try {
-			out = new FileOutputStream(file);
-			FileUtil.copy(in, out);
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		
 	}
 	
