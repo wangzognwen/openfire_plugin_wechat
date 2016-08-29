@@ -108,24 +108,19 @@ public class FileTransferManager{
 				"D:\\img");
 		connection.shutdownInput();
 		
-		LOGGER.info("fileName: " + fileName);
-		
 		InputStream fileIn = FileUtil.getFileInputStream(filePath + "/" + fileName);
 		if(fileIn == null){
 			throw new IOException("can not find file: " + fileName);
 		}
 		byte[] resonse = "success".getBytes();
         out.write(resonse);
-        out.write(0);
         
         int fileSize = fileIn.available();
-        LOGGER.info("fileSize: " + fileSize);
-        byte[] fileSizeData = Arrays.copyOf(String.valueOf(fileSize).getBytes("utf-8"), 4);
-        LOGGER.info("fileSizeData: " + fileSizeData);
+  
+        byte[] fileSizeData = Arrays.copyOf(String.valueOf(fileSize).getBytes(), 4);
         out.write(fileSizeData);
-        
-		boolean copy = FileUtil.copy(fileIn, out);
-		LOGGER.info("file copy finished, copy: " + copy);
+		FileUtil.copy(fileIn, out);
+		
 		fileIn.close();
 		out.flush();
         connection.shutdownOutput();
@@ -176,7 +171,6 @@ public class FileTransferManager{
     
         byte[] resonse = "success".getBytes();
         out.write(resonse);
-        out.write(0);
         out.flush();
         out.close();
 		
