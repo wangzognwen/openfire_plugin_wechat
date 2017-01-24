@@ -7,6 +7,9 @@ import org.jivesoftware.openfire.handler.IQHandler;
 import org.xmpp.packet.IQ;
 
 import com.wangzhe.service.MessageService;
+import org.xmpp.packet.Message;
+
+import java.util.List;
 
 public class OfflineMessageIQHandler extends IQHandler{
 	private IQHandlerInfo handlerInfo;
@@ -20,10 +23,10 @@ public class OfflineMessageIQHandler extends IQHandler{
 
 	@Override
 	public IQ handleIQ(IQ packet) throws UnauthorizedException {
-		Element readElement = packet.getChildElement();
-		String packetId = readElement.attributeValue("packetId");
-		
-		messageService.markMessageAsRead(packetId);
+		String userName = packet.getFrom().getNode();
+        List<Message> unreadMessages = messageService.getUnreadMessages(userName);
+
+
 		
 		IQ reply = IQ.createResultIQ(packet);
 		reply.setChildElement(packet.getChildElement().createCopy());

@@ -1,12 +1,14 @@
 package com.wangzhe.plugins.message;
 
 import com.wangzhe.service.MessageService;
+import com.wangzhe.util.MessageUtil;
 import com.wangzhe.util.TimeUtil;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.dom4j.Element;
+import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.interceptor.PacketInterceptor;
 import org.jivesoftware.openfire.interceptor.PacketRejectedException;
 import org.jivesoftware.openfire.session.Session;
@@ -15,32 +17,30 @@ import org.xmpp.packet.Message;
 import org.xmpp.packet.Packet;
 
 public class MessageInterceptor implements PacketInterceptor{
-	private String utc = TimeZone.getDefault().
-			getDisplayName(false, TimeZone.SHORT, Locale.getDefault());
 	private MessageService messageService =
 			MessageService.getInstance();
+
+    public static final String NAME = "receipt";
+
+    private static final String SERVER_NAME =
+            XMPPServer.getInstance().getServerInfo().getXMPPDomain();
+
+    public static final String NODE =
+            NAME + "." + SERVER_NAME;
 
 	@Override
 	public void interceptPacket(Packet packet, Session session, boolean incoming, boolean processed) throws PacketRejectedException {
 		if(!intercept(packet, session, incoming, processed)) return;
 		Message message = (Message) packet;
-		addTimeElement(message);
+		MessageUtil.addTimeElement(message, new Date());
 		storeMessage(message);
 		replyClient(session, message);
 	}
 	
-	private void addTimeElement(Message message){
-		Element element = message.getElement();
-		Element timeElement = 
-				element.addElement("time", "xmpp:custom:time");
-		timeElement.addAttribute("utc", utc);
-		timeElement.addText(TimeUtil.format(new Date(), true));
-	}
+
 	
 	private void storeMessage(Message message){
-		if(message.getChildElement("x", "jabber:x:delay") == null){
-			messageService.storeMessage(message);
-		}
+        messageService.storeMessage(message);
 	}
 	
 	/**
@@ -49,10 +49,10 @@ public class MessageInterceptor implements PacketInterceptor{
 	 */
 	private void replyClient(Session session, Message message){
 		Message replyMessage = message.createCopy();
-		replyMessage.setFrom(MessageComponent.NODE);
+		replyMessage.setFrom(NODE);
 		replyMessage.setTo(message.getFrom());
 		replyMessage.setType(Message.Type.normal);
-		session.process(replyMessage);
+		session.deliverRawText(replyMessage.toXML());
 	}
 	
 	private boolean intercept(Packet packet, Session session, boolean incoming, boolean processed){
@@ -60,11 +60,16 @@ public class MessageInterceptor implements PacketInterceptor{
 		if(from == null){
 			return false;
 		}
-		if(MessageComponent.NODE.equals(from.getNode())){
+		if(NODE.equals(from.getNode())){
 			return false;
 		}
 		if(packet instanceof Message && incoming && !processed){
-			return true;
+		    Message message = (Message) packet;
+		    //不是离线消息
+            if(message.getChildElement("x", "jabber:x:delay") == null){
+                return true;
+            }
+			return false;
 		}
 		return false;
 	}

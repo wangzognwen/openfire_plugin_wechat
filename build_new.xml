@@ -4,7 +4,7 @@
 
   <!-- Configure path to GWT SDK -->
   <!--需要将location属性改为自己插件项目所在文件目录-->	
-  <property name="openfire.sdk" location="E:/java/openfire_plugin_wechat" />
+  <property name="openfire.sdk" location="E:/java-intellij/openfire_plugin_wechat" />
 
   <!--如果插件项目所依赖第三方jar包不是放在lib目录下，请更改dir属性 -->
   <path id="project.class.path">

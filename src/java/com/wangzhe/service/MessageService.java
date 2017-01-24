@@ -3,15 +3,21 @@ package com.wangzhe.service;
 import com.wangzhe.bean.MessageEntity;
 import com.wangzhe.dao.MessageDao;
 
+import com.wangzhe.util.MessageUtil;
 import org.jivesoftware.openfire.XMPPServer;
 import org.jivesoftware.openfire.user.UserManager;
 import org.xmpp.packet.JID;
 import org.xmpp.packet.Message;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MessageService {
 	private static final MessageService mInstance =
 			new MessageService();
 	private MessageDao messageDao = MessageDao.getInstance();
+
+	private static final String SUFFIX = "@" + XMPPServer.getInstance().getServerInfo().getXMPPDomain();
 	
 	public static MessageService getInstance(){
 		return mInstance;
@@ -40,9 +46,27 @@ public class MessageService {
 		return false;
 	}
 	
-	public void markMessageAsRead(Message message){
-		messageDao.updateMessageFlag(message.getID(), 1);
+	public void markMessageAsRead(String packetId){
+		messageDao.updateMessageFlag(packetId, 1);
 	}
+
+	public List<Message> getUnreadMessages(String userName){
+	    List<MessageEntity> messageEntities = messageDao.getUnreadMessages(userName);
+	    List<Message> unreadMessages = new ArrayList<>();
+	    for(MessageEntity messageEntity : messageEntities){
+	        Message message = new Message();
+	        message.setID(messageEntity.getPacketId());
+	        message.setFrom(messageEntity.getSender() + SUFFIX);
+	        message.setTo(messageEntity.getReceiver() + SUFFIX);
+	        message.setBody(messageEntity.getBody());
+	        message.setType(Message.Type.chat);
+            MessageUtil.addTimeElement(message, messageEntity.getTime());
+            MessageUtil.addDelayElement(message, messageEntity.getTime());
+            unreadMessages.add(message);
+        }
+
+        return unreadMessages;
+    }
 	
 	private boolean shouldStoreMessage(Message message){
 		if (message.getChildElement("no-store", "urn:xmpp:hints") != null) {
